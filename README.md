@@ -12,19 +12,29 @@ Then, clone this ([html-build](https://github.com/whatwg/html-build)) repo:
 git clone https://github.com/whatwg/html-build.git && cd html-build
 ```
 
-You then have a decision to make as to how you want to do your builds: locally, on your computer, or using a [Docker](https://www.docker.com/) container. We suggest going the Docker route if and only if you are already comfortable with Docker.
+## Performing a build
 
-## Building locally
+You have a decision to make as to how you want to do your builds:
 
-### Prerequisites
+- Locally on your computer
+- Remotely, using the [build server](https://github.com/whatwg/build.whatwg.org)
+- Using a [Docker](https://www.docker.com/) container
+
+Local builds will be fastest, but require installing a lot of prerequisites. Using the build server is easiest, but slowest. Docker has speed close to a local build, and only requires Docker as a prerequisite.
+
+### Building locally
+
+#### Prerequisites
 
 To build locally, you'll need the following commands installed on your system:
 
-- `curl`, `grep`, `perl`, `unzip`
+- `curl`, `grep`, `perl`, `unzip`, `cargo`
 
-Optionally, for faster builds, you can install [Wattsi](https://github.com/whatwg/wattsi) and Python 3.7+ (necessary for applying syntax highlighting to `pre` contents). If you don't bother with that, the build will use [Wattsi Server](https://github.com/domenic/wattsi-server), which requires an internet connection.
+Optionally, for faster builds, you can install [Wattsi](https://github.com/whatwg/wattsi). If you don't bother with that, we will use the [build server](https://github.com/whatwg/build.whatwg.org), which requires an internet connection.
 
-### Running the build
+If you're using a local install of Wattsi, then optionally, you can install Python 3.7+ with [pipx](https://pypa.github.io/pipx/), to enable syntax highlighting of `pre` contents.
+
+#### Running the build
 
 Run the `build.sh` script from inside your `html-build` working directory, like this:
 
@@ -40,7 +50,19 @@ You may also set the environment variable `$HTML_SOURCE` to use a custom locatio
 HTML_SOURCE=~/hacks/dhtml ./build.sh
 ```
 
-## Building using a Docker container
+### Building using the build server
+
+To use the build server, use the `--remote` flag:
+
+```bash
+./build.sh --remote
+```
+
+This will ZIP up most of the files in the `html/` directory, send them to the build server, get back another ZIP file with the output, and unzip those into the output folder.
+
+You will need `zip` and `unzip` commands available in your `$PATH`.
+
+### Building using a Docker container
 
 The Dockerized version of the build allows you to run the build entirely inside a "container" (lightweight virtual machine). This includes tricky dependencies like a local copy of Wattsi and Python.
 
@@ -58,7 +80,7 @@ If you get permissions errors on Windows, you need to first [configure](https://
 
 After you complete the build steps above, the build will run and generate the single-page version of the spec, the multipage version, and more. If all goes well, you should very soon have an `output/` directory containing important files like `index.html`, `multipage/`, and `dev/`.
 
-You can also use the `--serve` option to `build.sh` to automatically serve the results on `https://localhost:8080/` after building (as long as you Python 3.7+ installed).
+You can also use the `--serve` option to `build.sh` to automatically serve the results on `http://localhost:8080/` after building (as long as you have Python 3.7+ installed).
 
 Now you're ready to edit the `html/source` file—and after you make your changes, you can run the `build.sh` script again to see the new output.
 
